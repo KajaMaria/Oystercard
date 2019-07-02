@@ -6,6 +6,7 @@ describe Oystercard do
   let(:oystercard_with_1) { described_class.new(Oystercard::MIN_FAIR) }
   let(:money) { Faker::Number.between(1, 10) }
   let(:station) { double :station }
+  let(:exit_station) { double :exit_station }
   describe '#new' do
     it "has no balance when inititialized" do
       expect(oystercard.balance).to eq 0
@@ -16,7 +17,9 @@ describe Oystercard do
     it 'raises an error if someone tries to put more than £90' do
       expect { oystercard.top_up(91)}.to raise_error 'Max top up allowed is £90. Please select different amount'
     end
-
+    it 'has an empty journeys storage when initialized' do
+      expect(oystercard.journeys).to eq []
+    end
   end
   describe '#top_up' do
     it 'we want a top-up method which allows adding money to balance' do
@@ -32,7 +35,7 @@ describe Oystercard do
   end
   context '#touch_in' do
     it "states that card is in use when true" do
-      expect(oystercard_with_1.touch_in(station)).to be true
+      expect(oystercard_with_1.touch_in(station)).to eq station
     end
     it "raises an error when balance is insufficient" do
       # oystercard.top_up(2)
@@ -44,10 +47,15 @@ describe Oystercard do
   end
   context '#touch_out' do
     it "states that card is not in use" do
-      expect(oystercard.touch_out).to be false
+      expect(oystercard.touch_out(exit_station)).to eq (-1)
     end
     it "is going to deduct money from the balance" do
-      expect {oystercard_with_1.touch_out}.to change{oystercard_with_1.balance}.by(-1)
+      expect {oystercard_with_1.touch_out(exit_station)}.to change{oystercard_with_1.balance}.by(-1)
+    end
+    it "is checking if journey is added to journeys storage" do
+      oystercard_with_1.touch_in(station)
+      oystercard_with_1.touch_out(exit_station)
+      expect(oystercard_with_1.journeys.length).to eq 1
     end
   end
   context '#in_journey?' do
