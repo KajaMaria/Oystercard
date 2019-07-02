@@ -7,6 +7,7 @@ describe Oystercard do
   let(:money) { Faker::Number.between(1, 10) }
   let(:station) { double :station }
   let(:exit_station) { double :exit_station }
+  let(:journey) { instance_double("journey", :entry_station => station, :exit_station => exit_station) }
   describe '#new' do
     it "has no balance when inititialized" do
       expect(oystercard.balance).to eq 0
@@ -34,26 +35,25 @@ describe Oystercard do
     end
   end
   context '#touch_in' do
-    it "states that card is in use when true" do
-      expect(oystercard_with_1.touch_in(station)).to eq station
-    end
-    it "raises an error when balance is insufficient" do
+      it "raises an error when balance is insufficient" do
       # oystercard.top_up(2)
       expect { oystercard.touch_in(station)}.to raise_error 'Balance is insuffcient'
     end
     it "remembers the entry station " do
-      expect {oystercard_with_1.touch_in(station)}.to change{oystercard_with_1.entry_station}.to(station)
+      expect(oystercard_with_1.touch_in(station).length).to eq 1
     end
   end
   context '#touch_out' do
     it "states that card is not in use" do
-      expect(oystercard.touch_out(exit_station)).to eq (-1)
+        expect(oystercard_with_1.in_journey?).to be false
     end
     it "is going to deduct money from the balance" do
-      expect {oystercard_with_1.touch_out(exit_station)}.to change{oystercard_with_1.balance}.by(-1)
+      allow(journey).to receive(:update_exit_station)
+      expect(oystercard_with_1.touch_out(exit_station)).to eq (0)
     end
     it "is checking if journey is added to journeys storage" do
       oystercard_with_1.touch_in(station)
+      allow(journey).to receive(:update_exit_station)
       oystercard_with_1.touch_out(exit_station)
       expect(oystercard_with_1.journeys.length).to eq 1
     end
@@ -64,6 +64,7 @@ describe Oystercard do
       expect(oystercard_with_1.in_journey?).to be true
     end
     it "says that it is in journey when touched in" do
+      allow(journey).to receive(:journey?).and_return false
       expect(oystercard.in_journey?).to be false
     end
   end
