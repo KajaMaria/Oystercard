@@ -21,5 +21,29 @@ describe Oystercard do
       expect(oystercard.top_up(money)).to eq (0 + money)
     end
   end
-
+  context '#deduct' do
+    it "deducts money from Users balance" do
+      oystercard.top_up(20)
+      expect(oystercard.deduct(5)).to eq 15
+    end
+  end
+  context '#touch_in' do
+    it "states that card is in use when true" do
+      expect(oystercard.touch_in).to be true
+    end
+  end
+  context '#touch_out' do
+    it "states that card is not in use" do
+      expect(oystercard.touch_out).to be false
+    end
+  end
+  context '#in_journey?' do
+    it "says that it is in journey when touched in" do
+      oystercard.touch_in
+      expect(oystercard.in_journey?).to be true
+    end
+    it "says that it is in journey when touched in" do
+      expect(oystercard.in_journey?).to be false
+    end 
+  end
 end
