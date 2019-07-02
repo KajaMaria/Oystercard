@@ -19,16 +19,13 @@ class Oystercard
     @balance += money
   end
 
-  def deduct(money)
-    @balance -= money
-  end
-
   def touch_in
     raise 'Balance is insuffcient' if insufficient?
     @in_use = true
   end
 
   def touch_out
+    deduct(MIN_FAIR)
     @in_use = false
   end
 
@@ -37,6 +34,10 @@ class Oystercard
   end
 
   private
+
+  def deduct(money)
+    @balance -= money
+  end
 
   def insufficient?
     @balance < MIN_FAIR

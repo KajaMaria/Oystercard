@@ -23,7 +23,8 @@ describe Oystercard do
     end
   end
   context '#deduct' do
-    it "deducts money from Users balance" do
+    xit "deducts money from Users balance" do
+      #x before it silence the whole it test
       oystercard.top_up(20)
       expect(oystercard.deduct(5)).to eq 15
     end
@@ -40,6 +41,9 @@ describe Oystercard do
   context '#touch_out' do
     it "states that card is not in use" do
       expect(oystercard.touch_out).to be false
+    end
+    it "is going to deduct money from the balance" do
+      expect {oystercard_with_1.touch_out}.to change{oystercard_with_1.balance}.by(-1)
     end
   end
   context '#in_journey?' do
