@@ -3,6 +3,7 @@ require 'faker'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
+  let(:oystercard_with_1) { described_class.new(Oystercard::MIN_FAIR) }
   let(:money) { Faker::Number.between(1, 10) }
   describe '#new' do
     it "has no balance when inititialized" do
@@ -29,7 +30,11 @@ describe Oystercard do
   end
   context '#touch_in' do
     it "states that card is in use when true" do
-      expect(oystercard.touch_in).to be true
+      expect(oystercard_with_1.touch_in).to be true
+    end
+    it "raises an error when balance is insufficient" do
+      # oystercard.top_up(2)
+      expect { oystercard.touch_in}.to raise_error 'Balance is insuffcient'
     end
   end
   context '#touch_out' do
@@ -39,11 +44,11 @@ describe Oystercard do
   end
   context '#in_journey?' do
     it "says that it is in journey when touched in" do
-      oystercard.touch_in
-      expect(oystercard.in_journey?).to be true
+      oystercard_with_1.touch_in
+      expect(oystercard_with_1.in_journey?).to be true
     end
     it "says that it is in journey when touched in" do
       expect(oystercard.in_journey?).to be false
-    end 
+    end
   end
 end

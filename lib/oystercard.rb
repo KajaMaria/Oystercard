@@ -3,13 +3,14 @@ require 'pry'
 
 class Oystercard
    DEFAULT_MAX_BALANCE = 90
+   MIN_FAIR = 1
 
   attr_accessor :balance, :max_balance, :money
 
   def initialize(balance = 0, max_balance = DEFAULT_MAX_BALANCE, in_use = false)
     @balance = balance
     @max_balance = max_balance
-    @in_use = in_use 
+    @in_use = in_use
     # @money = money
   end
 
@@ -23,6 +24,7 @@ class Oystercard
   end
 
   def touch_in
+    raise 'Balance is insuffcient' if insufficient?
     @in_use = true
   end
 
@@ -35,6 +37,10 @@ class Oystercard
   end
 
   private
+
+  def insufficient?
+    @balance < MIN_FAIR
+  end
 
   def max(money)
     money + @balance > DEFAULT_MAX_BALANCE
