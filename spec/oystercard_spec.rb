@@ -6,8 +6,11 @@ describe Oystercard do
   let(:oystercard_with_1) { described_class.new(Oystercard::MIN_FAIR) }
   let(:money) { Faker::Number.between(1, 10) }
   let(:station) { double :station }
+  let(:entry_station) { double :entry_station }
   let(:exit_station) { double :exit_station }
-  let(:journey) { instance_double("journey", :entry_station => station, :exit_station => exit_station) }
+  let(:journey) { double :journey, :add_entry_journey => nil, :add_exit_station => nil }
+
+  let(:current_journey) { instance_double("journey", :entry_station => station, :exit_station => exit_station) }
   describe '#new' do
     it "has no balance when inititialized" do
       expect(oystercard.balance).to eq 0
@@ -34,13 +37,16 @@ describe Oystercard do
       expect(oystercard.deduct(5)).to eq 15
     end
   end
+
   context '#touch_in' do
       it "raises an error when balance is insufficient" do
       # oystercard.top_up(2)
       expect { oystercard.touch_in(station)}.to raise_error 'Balance is insuffcient'
     end
-    it "remembers the entry station " do
-      expect(oystercard_with_1.touch_in(station).length).to eq 1
+    it "has an entry statiom" do
+
+      oystercard_with_1.touch_in(station, journey)
+      expect(oystercard_with_1.current_journey).to eq journey
     end
   end
   context '#touch_out' do

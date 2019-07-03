@@ -6,7 +6,7 @@ class Oystercard
    DEFAULT_MAX_BALANCE = 90
    MIN_FAIR = 1
 
-  attr_reader :balance, :max_balance, :money, :journeys
+  attr_reader :balance, :max_balance, :money, :journeys, :current_journey
 
   def initialize(balance = 0, max_balance = DEFAULT_MAX_BALANCE)
     @balance = balance
@@ -22,16 +22,15 @@ class Oystercard
     @balance += money
   end
 
-  def touch_in(entry_station)
+#You can only use Journey.new as an argument for RSPEC
+  def touch_in(station, journey = Journey.new)
     raise 'Balance is insuffcient' if insufficient?
-    add_journey(entry_station, nil)
+    @current_journey = journey
+    @current_journey.add_entry_journey(station)
   end
 
-  def touch_out(exit_station)
-    if @journeys.length > 0
-    @journeys.last.update_exit_station(exit_station)
-    else
-    add_journey(nil,exit_station)
+  def touch_out(station)
+    deduct(@current_journey.fare(MIN_FAIR))
     end
 
     deduct(MIN_FAIR)

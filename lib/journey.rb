@@ -1,18 +1,38 @@
 
 class Journey
-attr_reader :exit_station, :entry_station
+  attr_reader :journey
 
-def initialize(entry_station = nil, exit_station = nil )
-@exit_station = exit_station
-@entry_station = entry_station
+  def initialize
+    @journey = {}
+    @finished_journey = false
+    # @exit_station = exit_station
+    # @entry_station = entry_station
+  end
+
+  def add_entry_journey(entry_station)
+    @journey[:begin] = entry_station
+  end
+
+  def add_exit_station(exit_station)
+    @journey[:end] = exit_station
+    @finished_journey = true if completed?
+
+  end
+
+  def fare(minimum)
+    return minimum if completed?
+    return 6
+  end
+
+private
+
+  def completed?
+    @journey[:begin] != nil && @journey[:end] != nil
+  end
+
+
 end
 
-def update_exit_station(station)
-  @exit_station = station
-end
-
-def journey?
-  @entry_station != nil && @exit_station == nil 
-end
-
-end
+# new_journey = Journey.new
+# new_journey.add_entry_journey("whatever")
+# p new_journey.journey

@@ -2,23 +2,34 @@ require 'journey'
 
 describe Journey do
   let(:station) { double :station }
-  context '#new' do
-    it "has a entry point" do
-      expect(subject.entry_station).to eq nil
-    end
-    it "has an exit point" do
-      expect(subject.exit_station).to eq nil
+  let(:entry_station) { double :entry_station }
+  let(:exit_station) { double :exit_station }
+  context '#add_entry_journey' do
+    it "Starts a new journey" do
+      subject.add_entry_journey(station)
+      expect(subject.journey[:begin]).to eq station
     end
   end
-  context '#update_exit_station' do
-    it "updates on last stop" do
-      expect{ subject.update_exit_station(station) }.to change{subject.exit_station}.to(station)
+  context '#add_exit_station' do
+    it "has an exit point" do
+      subject.add_exit_station(station)
+      expect(subject.journey[:end]).to eq station
     end
   end
   context '#fare' do
     it "returns minimum fare" do
-      expect(subject.fare).to eq 1
+      subject.add_entry_journey(entry_station)
+      subject.add_exit_station(exit_station)
+      expect(subject.fare(1)).to eq 1
     end
+    it 'returns default if no either entry or exit' do
+      subject.add_entry_journey(entry_station)
+      expect(subject.fare(1)).to eq 6
+    end
+    it 'returns default if no exit' do
+      subject.add_exit_station(exit_station)
+      expect(subject.fare(1)).to eq 6
+    end 
   end
 
 
