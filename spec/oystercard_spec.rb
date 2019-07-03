@@ -55,6 +55,10 @@ describe Oystercard do
       oystercard_with_1.touch_out(exit_station, journey_fine)
       expect(oystercard_with_1.balance).to eq 0
     end
-  end
+    it "is going to deduct money if no entry was added to this journey " do
+      oystercard_with_1.touch_out(exit_station, journey_with_penalty)
+      expect(oystercard_with_1.balance).to eq -5
+    end
+  end 
 
 end

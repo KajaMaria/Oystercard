@@ -48,11 +48,6 @@ class Oystercard
     end
   end
 
-  def in_journey?
-    return @journeys.last.journey? if @journeys.length > 0
-    false
-  end
-
 
 # when we access other object with their private methods we cant access them in test! Only original class
   private
