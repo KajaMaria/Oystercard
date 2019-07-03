@@ -32,22 +32,15 @@ class Oystercard
   def touch_out(station, journey = Journey.new)
     if @current_journey == nil
       @current_journey = journey
-      @current_journey.add_exit_station(station)
-      deduct(@current_journey.fare(MIN_FAIR))
-      updated_journey
+      deduct_and_end(station)
     elsif @current_journey.journey.key?(:begin)
-      @current_journey.add_exit_station(station)
-      deduct(@current_journey.fare(MIN_FAIR))
-      updated_journey
+      deduct_and_end(station)
     else
       updated_journey
       @current_journey = journey
-      @current_journey.add_exit_station(station)
-      deduct(@current_journey.fare(MIN_FAIR))
-      updated_journey
+      deduct_and_end(station)
     end
   end
-
 
 # when we access other object with their private methods we cant access them in test! Only original class
   private
@@ -63,6 +56,12 @@ class Oystercard
 
   def deduct(money)
     @balance -= money
+  end
+
+  def deduct_and_end(station)
+    @current_journey.add_exit_station(station)
+    deduct(@current_journey.fare(MIN_FAIR))
+    updated_journey
   end
 
   def insufficient?

@@ -59,6 +59,9 @@ describe Oystercard do
       oystercard_with_1.touch_out(exit_station, journey_with_penalty)
       expect(oystercard_with_1.balance).to eq -5
     end
+    it "updates journeys array with new journey" do
+      oystercard_with_1.touch_out(exit_station, journey_fine)
+      expect(oystercard_with_1.journeys).to eq [journey_fine]
+    end
   end 
-
 end
