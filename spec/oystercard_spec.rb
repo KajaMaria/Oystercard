@@ -8,7 +8,8 @@ describe Oystercard do
   let(:station) { double :station }
   let(:entry_station) { double :entry_station }
   let(:exit_station) { double :exit_station }
-  let(:journey) { double :journey, :add_entry_journey => nil, :add_exit_station => nil }
+  let(:journey_fine) { double :journey, :add_entry_journey => nil, :add_exit_station => nil, :fare => 1 }
+  let(:journey_with_penalty) { double :journey, :add_entry_journey => nil, :add_exit_station => nil, :fare => 6 }
 
   let(:current_journey) { instance_double("journey", :entry_station => station, :exit_station => exit_station) }
   describe '#new' do
@@ -45,33 +46,15 @@ describe Oystercard do
     end
     it "has an entry statiom" do
 
-      oystercard_with_1.touch_in(station, journey)
-      expect(oystercard_with_1.current_journey).to eq journey
+      oystercard_with_1.touch_in(station, journey_fine)
+      expect(oystercard_with_1.current_journey).to eq journey_fine
     end
   end
   context '#touch_out' do
-    it "states that card is not in use" do
-        expect(oystercard_with_1.in_journey?).to be false
-    end
     it "is going to deduct money from the balance" do
-      allow(journey).to receive(:update_exit_station)
-      expect(oystercard_with_1.touch_out(exit_station)).to eq (0)
-    end
-    it "is checking if journey is added to journeys storage" do
-      oystercard_with_1.touch_in(station)
-      allow(journey).to receive(:update_exit_station)
-      oystercard_with_1.touch_out(exit_station)
-      expect(oystercard_with_1.journeys.length).to eq 1
+      oystercard_with_1.touch_out(exit_station, journey_fine)
+      expect(oystercard_with_1.balance).to eq 0
     end
   end
-  context '#in_journey?' do
-    it "says that it is in journey when touched in" do
-      oystercard_with_1.touch_in(station)
-      expect(oystercard_with_1.in_journey?).to be true
-    end
-    it "says that it is in journey when touched in" do
-      allow(journey).to receive(:journey?).and_return false
-      expect(oystercard.in_journey?).to be false
-    end
-  end
+
 end

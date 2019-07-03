@@ -29,11 +29,23 @@ class Oystercard
     @current_journey.add_entry_journey(station)
   end
 
-  def touch_out(station)
-    deduct(@current_journey.fare(MIN_FAIR))
+  def touch_out(station, journey = Journey.new)
+    if @current_journey == nil
+      @current_journey = journey
+      @current_journey.add_exit_station(station)
+      deduct(@current_journey.fare(MIN_FAIR))
+      updated_journey
+    elsif @current_journey.journey.key?(:begin)
+      @current_journey.add_exit_station(station)
+      deduct(@current_journey.fare(MIN_FAIR))
+      updated_journey
+    else
+      updated_journey
+      @current_journey = journey
+      @current_journey.add_exit_station(station)
+      deduct(@current_journey.fare(MIN_FAIR))
+      updated_journey
     end
-
-    deduct(MIN_FAIR)
   end
 
   def in_journey?
@@ -44,6 +56,11 @@ class Oystercard
 
 # when we access other object with their private methods we cant access them in test! Only original class
   private
+
+  def updated_journey
+      @journeys << @current_journey
+      @current_journey = nil
+  end
 
   def add_journey(entry_station, exit_station)
     @journeys << Journey.new(entry_station,exit_station)
