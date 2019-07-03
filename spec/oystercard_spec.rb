@@ -1,11 +1,10 @@
 require 'oystercard'
-require 'faker'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
   let(:oystercard_with_1) { described_class.new(Oystercard::MIN_FAIR) }
-  let(:money) { Faker::Number.between(1, 10) }
   let(:station) { double :station }
+  let(:money) { double :money }
   let(:entry_station) { double :entry_station }
   let(:exit_station) { double :exit_station }
   let(:journey_fine) { double :journey, :add_entry_journey => nil, :add_exit_station => nil, :fare => 1 }
@@ -28,7 +27,7 @@ describe Oystercard do
   end
   describe '#top_up' do
     it 'we want a top-up method which allows adding money to balance' do
-      expect(oystercard.top_up(money)).to eq (0 + money)
+      expect(oystercard.top_up(5)).to eq (5)
     end
   end
   context '#deduct' do
@@ -63,5 +62,5 @@ describe Oystercard do
       oystercard_with_1.touch_out(exit_station, journey_fine)
       expect(oystercard_with_1.journeys).to eq [journey_fine]
     end
-  end 
+  end
 end

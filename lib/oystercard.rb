@@ -1,4 +1,3 @@
-require 'money'
 require 'pry'
 require_relative 'journey.rb'
 
