@@ -16,7 +16,7 @@ class Journey
   def add_exit_station(exit_station)
     @journey[:end] = exit_station
     @finished_journey = true if completed?
-
+    @journey[:finished] = @finished_journey
   end
 
   def fare(minimum)
@@ -29,10 +29,9 @@ private
   def completed?
     @journey[:begin] != nil && @journey[:end] != nil
   end
-
-
 end
 
 # new_journey = Journey.new
 # new_journey.add_entry_journey("whatever")
+# new_journey.add_exit_station("trever")
 # p new_journey.journey

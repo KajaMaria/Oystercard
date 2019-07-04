@@ -2,11 +2,14 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
-  let(:oystercard_with_1) { described_class.new(Oystercard::MIN_FAIR) }
+  let(:oystercard_with_1) { described_class.new(Oystercard::MIN_FAIR, journey_log) }
+  let(:oystercard_with_1_pen) { described_class.new(Oystercard::MIN_FAIR, journey_log_pen) }
   let(:station) { double :station }
   let(:money) { double :money }
   let(:entry_station) { double :entry_station }
   let(:exit_station) { double :exit_station }
+  let(:journey_log) { double :journey_log, :start => nil, :finish => nil, :journey => journey_fine }
+  let(:journey_log_pen) { double :journey_log, :start => nil, :finish => nil, :journey => journey_with_penalty }
   let(:journey_fine) { double :journey, :add_entry_journey => nil, :add_exit_station => nil, :fare => 1 }
   let(:journey_with_penalty) { double :journey, :add_entry_journey => nil, :add_exit_station => nil, :fare => 6 }
 
@@ -31,7 +34,7 @@ describe Oystercard do
     end
   end
   context '#deduct' do
-    xit "deducts money from Users balance" do
+    it "deducts money from Users balance" do
       #x before it silence the whole it test
       oystercard.top_up(20)
       expect(oystercard.deduct(5)).to eq 15
@@ -43,24 +46,19 @@ describe Oystercard do
       # oystercard.top_up(2)
       expect { oystercard.touch_in(station)}.to raise_error 'Balance is insuffcient'
     end
-    it "has an entry statiom" do
-
-      oystercard_with_1.touch_in(station, journey_fine)
-      expect(oystercard_with_1.current_journey).to eq journey_fine
+    it "starts a journey log" do
+      oystercard_with_1.touch_in(station)
+      expect(oystercard_with_1.journey_log).to eq journey_log
     end
   end
   context '#touch_out' do
     it "is going to deduct money from the balance" do
-      oystercard_with_1.touch_out(exit_station, journey_fine)
+      oystercard_with_1.touch_out(exit_station)
       expect(oystercard_with_1.balance).to eq 0
     end
     it "is going to deduct money if no entry was added to this journey " do
-      oystercard_with_1.touch_out(exit_station, journey_with_penalty)
-      expect(oystercard_with_1.balance).to eq -5
-    end
-    it "updates journeys array with new journey" do
-      oystercard_with_1.touch_out(exit_station, journey_fine)
-      expect(oystercard_with_1.journeys).to eq [journey_fine]
+      oystercard_with_1_pen.touch_out(exit_station)
+      expect(oystercard_with_1_pen.balance).to eq -5
     end
   end
 end

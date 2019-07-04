@@ -6,6 +6,7 @@ gem 'rubocop', '0.60.0'
 <<<<<<< HEAD
 group :test do
   gem 'faker'
+  gem 'simplecov'
 end
 
 =======

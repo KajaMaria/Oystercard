@@ -29,7 +29,7 @@ describe Journey do
     it 'returns default if no exit' do
       subject.add_exit_station(exit_station)
       expect(subject.fare(1)).to eq 6
-    end 
+    end
   end
 
 
