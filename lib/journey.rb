@@ -5,6 +5,8 @@ class Journey
   def initialize
     @journey = {}
     @finished_journey = false
+
+
     # @exit_station = exit_station
     # @entry_station = entry_station
   end
@@ -19,9 +21,12 @@ class Journey
     @journey[:finished] = @finished_journey
   end
 
-  def fare(minimum)
-    return minimum if completed?
-    return 6
+  def fare
+    if completed?
+      return count_fare
+    else 
+      return Oystercard::PENALTY
+    end
   end
 
 private
@@ -29,6 +34,13 @@ private
   def completed?
     @journey[:begin] != nil && @journey[:end] != nil
   end
+
+  def count_fare
+    starting_zone = @journey[:begin].zone
+    ending_zone = @journey[:end].zone
+    fare =Oystercard::MIN_FAIR + (starting_zone - ending_zone).abs
+  end
+
 end
 
 # new_journey = Journey.new

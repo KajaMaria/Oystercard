@@ -5,6 +5,7 @@ require_relative 'journeylog'
 class Oystercard
    DEFAULT_MAX_BALANCE = 90
    MIN_FAIR = 1
+   PENALTY = 6
 
   attr_reader :balance, :max_balance, :money, :journeys, :current_journey, :journey_log
 
